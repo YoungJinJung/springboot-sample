@@ -1,8 +1,8 @@
 spring:
   application:
     name: sample
-  config:
-    import: optional:aws-secretsmanager:/secret/sample_pdmsdapne2
+#  config:
+#    import: optional:aws-secretsmanager:/secret/sample_pdmsdapne2
 
 logging:
   level:
