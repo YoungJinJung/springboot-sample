@@ -1,5 +1,7 @@
 package com.example.demo.configuration.datasource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -22,6 +24,7 @@ import java.util.Map;
 @Configuration
 public class DatasourceConfiguration {
     private static RdsClient rdsClient = RdsClient.builder().region(Region.AP_EAST_2).build();
+    private static final Logger log = LoggerFactory.getLogger(DatasourceConfiguration.class);
 
     @Bean(name = "writerDataSourceProperties")
     @ConfigurationProperties(prefix = "spring.datasource.writer")
@@ -32,7 +35,7 @@ public class DatasourceConfiguration {
     public DataSource writerDataSource() {
         String writerUsername = writerDataSourceProperties().getUsername();
         String writerUrl = writerDataSourceProperties().getUrl();
-
+        log.info("Url: %s, UserName: %s",writerUrl,writerUsername);
         String readerAuthToken = getAuthToken(rdsClient, writerUrl, writerUsername);
         return readerDataSourceProperties()
                 .initializeDataSourceBuilder()
@@ -50,7 +53,7 @@ public class DatasourceConfiguration {
     public DataSource readerDataSource() {
         String readerUsername = readerDataSourceProperties().getUsername();
         String readerUrl = readerDataSourceProperties().getUrl();
-
+        log.info("Url: %s, UserName: %s",readerUrl,readerUsername);
         String readerAuthToken = getAuthToken(rdsClient, readerUrl, readerUsername);
         return readerDataSourceProperties()
                 .initializeDataSourceBuilder()
