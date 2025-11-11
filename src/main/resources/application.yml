@@ -1,14 +1,11 @@
 spring:
   application:
     name: sample
+  config:
+    import: optional:aws-secretsmanager:/secret/sample_pdmsdapne2
 
 logging:
   level:
-    software.amazon.awssdk.auth: DEBUG
-    software.amazon.jdbc: DEBUG
-    root: DEBUG
-    com.zaxxer.hikari: DEBUG
-    org.postgresql: DEBUG
-    com.mysql.cj: DEBUG
+    root: INFO
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
