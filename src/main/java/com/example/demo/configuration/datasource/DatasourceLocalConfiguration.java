@@ -19,10 +19,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-@Profile("!local")
-public class DatasourceConfiguration {
+@Profile("local")
+public class DatasourceLocalConfiguration {
     private static RdsClient rdsClient = RdsClient.builder().region(Region.AP_EAST_2).build();
-    private static final Logger log = LoggerFactory.getLogger(DatasourceConfiguration.class);
+    private static final Logger log = LoggerFactory.getLogger(DatasourceLocalConfiguration.class);
 
     @Bean(name = "writerDataSourceProperties")
     @ConfigurationProperties(prefix = "spring.datasource.writer")
