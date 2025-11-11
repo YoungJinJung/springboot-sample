@@ -1,0 +1,119 @@
+package com.example.demo.configuration.datasource;
+
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Primary;
+import org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy;
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.rds.RdsClient;
+import software.amazon.awssdk.services.rds.RdsUtilities;
+import software.amazon.awssdk.services.rds.model.GenerateAuthenticationTokenRequest;
+import software.amazon.awssdk.services.rds.model.RdsException;
+
+import javax.sql.DataSource;
+import java.util.HashMap;
+import java.util.Map;
+
+@Configuration
+public class DatasourceConfiguration {
+    private static RdsClient rdsClient = RdsClient.builder().region(Region.AP_EAST_2).build();
+
+    @Bean(name = "writerDataSourceProperties")
+    @ConfigurationProperties(prefix = "spring.datasource.writer")
+    public DataSourceProperties writerDataSourceProperties(){
+        return new DataSourceProperties();
+    }
+    @Bean(name = "writerDataSource")
+    public DataSource writerDataSource() {
+        String writerUsername = writerDataSourceProperties().getUsername();
+        String writerUrl = writerDataSourceProperties().getUrl();
+
+        String readerAuthToken = getAuthToken(rdsClient, writerUrl, writerUsername);
+        return readerDataSourceProperties()
+                .initializeDataSourceBuilder()
+                .password(readerAuthToken)
+                .create().
+                build();
+    }
+
+    @Bean(name = "readerDataSourceProperties")
+    @ConfigurationProperties(prefix = "spring.datasource.reader")
+    public DataSourceProperties readerDataSourceProperties(){
+        return new DataSourceProperties();
+    }
+    @Bean(name = "readerDataSource")
+    public DataSource readerDataSource() {
+        String readerUsername = readerDataSourceProperties().getUsername();
+        String readerUrl = readerDataSourceProperties().getUrl();
+
+        String readerAuthToken = getAuthToken(rdsClient, readerUrl, readerUsername);
+        return readerDataSourceProperties()
+                .initializeDataSourceBuilder()
+                .password(readerAuthToken)
+                .create().
+                build();
+    }
+
+    @Bean
+    @DependsOn({"writerDataSource", "readerDataSource"})
+    public DataSource routingDataSource(
+            @Qualifier("writerDataSource") DataSource masterDataSource,
+            @Qualifier("readerDataSource") DataSource slaveDataSource) {
+
+        RoutingDataSource routingDataSource = new RoutingDataSource();
+
+        Map<Object, Object> targetDataSources = new HashMap<>();
+        targetDataSources.put(RoutingDataSource.DataSourceType.WRITER, masterDataSource);
+        targetDataSources.put(RoutingDataSource.DataSourceType.READER, slaveDataSource);
+
+        routingDataSource.setTargetDataSources(targetDataSources);
+        routingDataSource.setDefaultTargetDataSource(masterDataSource);
+
+        return routingDataSource;
+    }
+
+    @Bean("dataSource")
+    @Primary
+    @DependsOn({"routingDataSource"})
+    public DataSource dataSource() {
+        return new LazyConnectionDataSourceProxy(routingDataSource(writerDataSource(), readerDataSource()));
+    }
+
+    private String[] extractHostAndPort(String jdbcUrl) {
+        String pattern = "://([^/]+)";
+        java.util.regex.Pattern p = java.util.regex.Pattern.compile(pattern);
+        java.util.regex.Matcher m = p.matcher(jdbcUrl);
+
+        if (m.find()) {
+            String hostPort = m.group(1);
+            String[] parts = hostPort.split(":");
+            return new String[]{parts[0], parts[1]};
+        }
+        return null;
+    }
+
+    private String getAuthToken(RdsClient rdsClient, String url, String username) {
+
+        RdsUtilities utilities = rdsClient.utilities();
+        String[] endpoint = extractHostAndPort(url);
+        try {
+            GenerateAuthenticationTokenRequest tokenRequest = GenerateAuthenticationTokenRequest.builder()
+                    .credentialsProvider(DefaultCredentialsProvider.builder().build())
+                    .username(username)
+                    .port(Integer.parseInt(endpoint[1]))
+                    .hostname(endpoint[0])
+                    .build();
+
+            return utilities.generateAuthenticationToken(tokenRequest);
+
+        } catch (RdsException e) {
+            System.out.println(e.getLocalizedMessage());
+        }
+        return "";
+    }
+}
