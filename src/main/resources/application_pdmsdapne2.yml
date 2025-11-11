@@ -1,0 +1,24 @@
+spring:
+  config:
+    import: optional:aws-secretsmanager:/secret/sample_pdmsdapne2
+  datasource:
+    driver-class-name: software.amazon.jdbc.Driver
+    url: ${DB_URL}
+    username: ${DB_USER}
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 1
+      connection-timeout: 15000
+      data-source-properties:
+        wrapperPlugins: auroraConnectionTracker,failover,efm,iam
+        loginTimeout: 5
+
+sample:
+  id: ${id:test}
+  password: ${password:test}
+
+custom:
+  token: ${token_value:U2FtcGxlIERldk9wcyB0b2tlbiB2YWx1ZXMK}
+
+
+

@@ -1,19 +1,14 @@
 spring:
   application:
-    name: demo
-  config:
-    import: optional:aws-secretsmanager:/secret/demo
-
-sample:
-  id: ${id:test}
-  password: ${password:test}
-
-custom:
-  token: ${token_value:U2FtcGxlIERldk9wcyB0b2tlbiB2YWx1ZXMK}
+    name: sample
 
 logging:
   level:
-    com.example.demo: DEBUG
-    org.springframework.security: DEBUG
+    software.amazon.awssdk.auth: DEBUG
+    software.amazon.jdbc: DEBUG
+    root: DEBUG
+    com.zaxxer.hikari: DEBUG
+    org.postgresql: DEBUG
+    com.mysql.cj: DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"

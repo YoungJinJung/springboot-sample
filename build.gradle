@@ -1,7 +1,7 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.3.3'
-	id 'io.spring.dependency-management' version '1.1.6'
+	id 'org.springframework.boot' version '3.5.7'
+	id 'io.spring.dependency-management' version '1.1.7'
 }
 
 group = 'com.example'
@@ -13,7 +13,8 @@ java {
 	}
 }
 ext {
-	springCloudAwsVersion = '3.2.0'
+	springCloudAwsVersion = '3.4.0'
+	amazonLibVersion = '2.38.2'
 }
 
 repositories {
@@ -29,13 +30,20 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
+	// DB
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	implementation 'software.amazon.jdbc:aws-advanced-jdbc-wrapper:2.6.6'
+	implementation 'org.postgresql:postgresql:42.7.8'
+
 	// aws setting
-	implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap:4.0.1'
+	implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap:4.3.0'
 	implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:${springCloudAwsVersion}")
 	implementation "io.awspring.cloud:spring-cloud-aws-starter-secrets-manager:${springCloudAwsVersion}"
 	implementation "io.awspring.cloud:spring-cloud-aws-autoconfigure:${springCloudAwsVersion}"
-	implementation 'software.amazon.awssdk:sts:2.28.15'
-
+	// AWS SDK modules needed for IAM auth with RDS
+	implementation "software.amazon.awssdk:rds:${amazonLibVersion}"
+	implementation "software.amazon.awssdk:sts:${amazonLibVersion}"
+	implementation "software.amazon.awssdk:auth:${amazonLibVersion}"
 }
 
 tasks.named('test') {
