@@ -38,8 +38,8 @@ public class DatasourceConfiguration {
         log.info("Url: {}, UserName: {}",writerUrl,writerUsername);
 
         String writerAuthToken = getAuthToken(rdsClient, writerUrl, writerUsername);
+
         writerDataSourceProperties.setPassword(writerAuthToken);
-        log.info("Url: {}, UserName: {}, pw: {}",writerUrl,writerUsername,writerAuthToken);
 
         return writerDataSourceProperties
                 .initializeDataSourceBuilder()
@@ -60,8 +60,8 @@ public class DatasourceConfiguration {
         log.info("Url: {}, UserName: {}",readerUrl,readerUsername);
 
         String readerAuthToken = getAuthToken(rdsClient, readerUrl, readerUsername);
+
         readerDataSourceProperties.setPassword(readerAuthToken);
-        log.info("Url: {}, UserName: {}, pw: {}",readerUrl,readerUsername,readerAuthToken);
 
         return readerDataSourceProperties
                 .initializeDataSourceBuilder()
@@ -111,7 +111,6 @@ public class DatasourceConfiguration {
 
         RdsUtilities utilities = rdsClient.utilities();
         String[] endpoint = extractHostAndPort(url);
-        log.info("host: {}, port: {}",endpoint[0],endpoint[1]);
 
         try {
             GenerateAuthenticationTokenRequest tokenRequest = GenerateAuthenticationTokenRequest.builder()
