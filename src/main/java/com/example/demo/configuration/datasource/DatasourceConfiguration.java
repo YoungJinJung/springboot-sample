@@ -22,7 +22,7 @@ import java.util.Map;
 @Configuration
 @Profile("!local")
 public class DatasourceConfiguration {
-    private static RdsClient rdsClient = RdsClient.builder().region(Region.AP_EAST_2).build();
+    private static RdsClient rdsClient = RdsClient.builder().region(Region.AP_NORTHEAST_2).build();
     private static final Logger log = LoggerFactory.getLogger(DatasourceConfiguration.class);
 
     @Bean(name = "writerDataSourceProperties")
