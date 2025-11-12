@@ -29,7 +29,7 @@ public class DatasourceLocalConfiguration {
         String writerUrl = writerDataSourceProperties.getUrl();
         log.info("Url: {}, UserName: {}",writerUrl,writerUsername);
 
-        return readerDataSourceProperties()
+        return writerDataSourceProperties
                 .initializeDataSourceBuilder()
                 .type(HikariDataSource.class)
                 .build();
@@ -46,7 +46,7 @@ public class DatasourceLocalConfiguration {
         String readerUrl = readerDataSourceProperties.getUrl();
         log.info("Url: {}, UserName: {}",readerUrl,readerUsername);
 
-        return readerDataSourceProperties()
+        return readerDataSourceProperties
                 .initializeDataSourceBuilder()
                 .type(HikariDataSource.class)
                 .build();
