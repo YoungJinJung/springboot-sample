@@ -1,5 +1,6 @@
 package com.example.demo.configuration.datasource;
 
+import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -33,13 +34,16 @@ public class DatasourceConfiguration {
     public DataSource writerDataSource(@Qualifier("writerDataSourceProperties") DataSourceProperties writerDataSourceProperties) {
         String writerUsername = writerDataSourceProperties.getUsername();
         String writerUrl = writerDataSourceProperties.getUrl();
+
         log.info("Url: {}, UserName: {}",writerUrl,writerUsername);
+
         String readerAuthToken = getAuthToken(rdsClient, writerUrl, writerUsername);
+
         return readerDataSourceProperties()
                 .initializeDataSourceBuilder()
                 .password(readerAuthToken)
-                .create().
-                build();
+                .type(HikariDataSource.class)
+                .build();
     }
 
     @Bean(name = "readerDataSourceProperties")
@@ -49,15 +53,17 @@ public class DatasourceConfiguration {
     }
     @Bean(name = "readerDataSource")
     public DataSource readerDataSource(@Qualifier("readerDataSourceProperties") DataSourceProperties readerDataSourceProperties) {
-        String readerUsername = readerDataSourceProperties().getUsername();
-        String readerUrl = readerDataSourceProperties().getUrl();
+        String readerUsername = readerDataSourceProperties.getUsername();
+        String readerUrl = readerDataSourceProperties.getUrl();
+
         log.info("Url: {}, UserName: {}",readerUrl,readerUsername);
+
         String readerAuthToken = getAuthToken(rdsClient, readerUrl, readerUsername);
         return readerDataSourceProperties()
                 .initializeDataSourceBuilder()
                 .password(readerAuthToken)
-                .create().
-                build();
+                .type(HikariDataSource.class)
+                .build();
     }
 
     @Bean

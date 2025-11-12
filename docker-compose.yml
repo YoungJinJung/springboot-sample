@@ -1,18 +1,24 @@
-version: '3.8'
+version: "3.8"
 
 services:
-  db:
+  database:
+    container_name: postgres_mbl
     image: postgres:16
-    container_name: my-postgres-db
     restart: always
-    environment:
-      POSTGRES_DB: mydatabase
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
     ports:
-      - "5432:5432"
+      - "5440:5432"
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres_password
+      POSTGRES_HOST_AUTH_METHOD: trust
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_mbl_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
-  postgres_data:
+  postgres_mbl_data:

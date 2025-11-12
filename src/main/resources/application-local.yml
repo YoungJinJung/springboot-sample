@@ -1,31 +1,25 @@
 spring:
-  config:
-    import: optional:aws-secretsmanager:/secret/sample_pdmsdapne2
+#  config:
+#    import: optional:aws-secretsmanager:/secret/sample_pdmsdapne2
   datasource:
     writer:
       driver-class-name: org.postgresql.Driver
-      url: ${DB_RW_URL:jdbc:postgresql://localhost:5432/mydatabase}
-      username: ${DB_RW_USER:myuser}
-      password: {DB_RW_PASSWORD:mypassword}
+      url: jdbc:postgresql://localhost:5440/postgres
+      username: postgres
+      password: postgres_password
       hikari:
         maximum-pool-size: 5
         minimum-idle: 1
         connection-timeout: 15000
-        data-source-properties:
-          wrapperPlugins: auroraConnectionTracker,failover,efm,iam
-          loginTimeout: 5
     reader:
       driver-class-name: org.postgresql.Driver
-      url: ${DB_RO_URL:jdbc:postgresql://localhost:5432/mydatabase}
-      username: ${DB_RW_USER:myuser}
-      password: {DB_RW_PASSWORD:mypassword}
+      url: jdbc:postgresql://localhost:5440/postgres
+      username: postgres
+      password: postgres_password
       hikari:
         maximum-pool-size: 5
         minimum-idle: 1
         connection-timeout: 15000
-        data-source-properties:
-          wrapperPlugins: auroraConnectionTracker,failover,efm,iam
-          loginTimeout: 5
 
 sample:
   id: ${id:test}
