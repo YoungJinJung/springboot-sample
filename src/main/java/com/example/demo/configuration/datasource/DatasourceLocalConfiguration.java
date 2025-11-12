@@ -1,5 +1,6 @@
 package com.example.demo.configuration.datasource;
 
+import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -7,12 +8,6 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.*;
 import org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy;
-import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.rds.RdsClient;
-import software.amazon.awssdk.services.rds.RdsUtilities;
-import software.amazon.awssdk.services.rds.model.GenerateAuthenticationTokenRequest;
-import software.amazon.awssdk.services.rds.model.RdsException;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
@@ -21,7 +16,6 @@ import java.util.Map;
 @Configuration
 @Profile("local")
 public class DatasourceLocalConfiguration {
-    private static RdsClient rdsClient = RdsClient.builder().region(Region.AP_EAST_2).build();
     private static final Logger log = LoggerFactory.getLogger(DatasourceLocalConfiguration.class);
 
     @Bean(name = "writerDataSourceProperties")
@@ -34,12 +28,11 @@ public class DatasourceLocalConfiguration {
         String writerUsername = writerDataSourceProperties.getUsername();
         String writerUrl = writerDataSourceProperties.getUrl();
         log.info("Url: {}, UserName: {}",writerUrl,writerUsername);
-        String readerAuthToken = getAuthToken(rdsClient, writerUrl, writerUsername);
+
         return readerDataSourceProperties()
                 .initializeDataSourceBuilder()
-                .password(readerAuthToken)
-                .create().
-                build();
+                .type(HikariDataSource.class)
+                .build();
     }
 
     @Bean(name = "readerDataSourceProperties")
@@ -49,15 +42,14 @@ public class DatasourceLocalConfiguration {
     }
     @Bean(name = "readerDataSource")
     public DataSource readerDataSource(@Qualifier("readerDataSourceProperties") DataSourceProperties readerDataSourceProperties) {
-        String readerUsername = readerDataSourceProperties().getUsername();
-        String readerUrl = readerDataSourceProperties().getUrl();
+        String readerUsername = readerDataSourceProperties.getUsername();
+        String readerUrl = readerDataSourceProperties.getUrl();
         log.info("Url: {}, UserName: {}",readerUrl,readerUsername);
-        String readerAuthToken = getAuthToken(rdsClient, readerUrl, readerUsername);
+
         return readerDataSourceProperties()
                 .initializeDataSourceBuilder()
-                .password(readerAuthToken)
-                .create().
-                build();
+                .type(HikariDataSource.class)
+                .build();
     }
 
     @Bean
@@ -83,38 +75,5 @@ public class DatasourceLocalConfiguration {
     @DependsOn({"routingDataSource"})
     public DataSource dataSource() {
         return new LazyConnectionDataSourceProxy(routingDataSource(writerDataSource(writerDataSourceProperties()), readerDataSource(readerDataSourceProperties())));
-    }
-
-    private String[] extractHostAndPort(String jdbcUrl) {
-        String pattern = "://([^/]+)";
-        java.util.regex.Pattern p = java.util.regex.Pattern.compile(pattern);
-        java.util.regex.Matcher m = p.matcher(jdbcUrl);
-
-        if (m.find()) {
-            String hostPort = m.group(1);
-            String[] parts = hostPort.split(":");
-            return new String[]{parts[0], parts[1]};
-        }
-        return null;
-    }
-
-    private String getAuthToken(RdsClient rdsClient, String url, String username) {
-
-        RdsUtilities utilities = rdsClient.utilities();
-        String[] endpoint = extractHostAndPort(url);
-        try {
-            GenerateAuthenticationTokenRequest tokenRequest = GenerateAuthenticationTokenRequest.builder()
-                    .credentialsProvider(DefaultCredentialsProvider.builder().build())
-                    .username(username)
-                    .port(Integer.parseInt(endpoint[1]))
-                    .hostname(endpoint[0])
-                    .build();
-
-            return utilities.generateAuthenticationToken(tokenRequest);
-
-        } catch (RdsException e) {
-            System.out.println(e.getLocalizedMessage());
-        }
-        return "";
     }
 }
