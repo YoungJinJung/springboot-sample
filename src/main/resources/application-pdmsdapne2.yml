@@ -11,6 +11,7 @@ spring:
         minimum-idle: 1
         connection-timeout: 15000
         data-source-properties:
+          iamRegion: ap-northeast-2
           wrapperPlugins: auroraConnectionTracker,failover,efm,iam
           loginTimeout: 5
     reader:
@@ -22,6 +23,7 @@ spring:
         minimum-idle: 1
         connection-timeout: 15000
         data-source-properties:
+          iamRegion: ap-northeast-2
           wrapperPlugins: auroraConnectionTracker,failover,efm,iam
           loginTimeout: 5
 
