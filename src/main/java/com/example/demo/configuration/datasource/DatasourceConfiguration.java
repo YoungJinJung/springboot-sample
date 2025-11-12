@@ -119,6 +119,7 @@ public class DatasourceConfiguration {
                     .username(username)
                     .port(Integer.parseInt(endpoint[1]))
                     .hostname(endpoint[0])
+                    .region(Region.AP_NORTHEAST_2)
                     .build();
 
             return utilities.generateAuthenticationToken(tokenRequest);
