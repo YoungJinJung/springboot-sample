@@ -38,7 +38,7 @@ public class DatasourceConfiguration {
         log.info("Url: {}, UserName: {}",writerUrl,writerUsername);
 
         String writerAuthToken = getAuthToken(rdsClient, writerUrl, writerUsername);
-        writerDataSourceProperties.setPassword(writerAuthToken);
+//        writerDataSourceProperties.setPassword(writerAuthToken);
 
         return writerDataSourceProperties
                 .initializeDataSourceBuilder()
@@ -59,7 +59,7 @@ public class DatasourceConfiguration {
         log.info("Url: {}, UserName: {}",readerUrl,readerUsername);
 
         String readerAuthToken = getAuthToken(rdsClient, readerUrl, readerUsername);
-        readerDataSourceProperties.setPassword(readerAuthToken);
+//        readerDataSourceProperties.setPassword(readerAuthToken);
         return readerDataSourceProperties
                 .initializeDataSourceBuilder()
                 .type(HikariDataSource.class)
