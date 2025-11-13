@@ -31,7 +31,7 @@ services:
        SPRING_DATASOURCE_WRITER_URL: jdbc:postgresql://postgres_mbl:5432/postgres
        SPRING_DATASOURCE_READER_URL: jdbc:postgresql://postgres_mbl:5432/postgres
        AWS_REGION: ap-northeast-2
-       THC_PATH: /actuator/health
+       THC_PATH: /actuator/health/readiness
     healthcheck:
       test: ["CMD", "/workspace/health-check"]
       interval: 10s

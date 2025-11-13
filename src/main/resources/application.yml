@@ -11,14 +11,10 @@ logging:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
 
 management:
-  endpoints:
-    web:
-      exposure:
-        include: health
-      base-path: /actuator
-  endpoint:
-    health:
-      show-details: always
   health:
-    defaults:
+    probes:
+      enabled: true
+    readinessstate:
+      enabled: true
+    livenessstate:
       enabled: true
