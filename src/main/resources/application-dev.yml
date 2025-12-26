@@ -1,6 +1,6 @@
 spring:
   config:
-    import: optional:aws-secretsmanager:/secret/sample_pdmsdapne2
+    import: optional:aws-secretsmanager:/secret/sample_dev
   datasource:
     writer:
       driver-class-name: software.amazon.jdbc.Driver
