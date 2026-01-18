@@ -22,6 +22,7 @@ permissions:
 env:
   REGION: ap-northeast-2
   APP_NAME: demoapp
+  S3_BUCKET_NAME: zerone-id-service-deployment
 
 jobs:
   build:
@@ -58,6 +59,9 @@ jobs:
         with:
           aws-region: ${{ env.REGION }}
           role-to-assume: ${{ secrets.ASSUME_IAM_ROLE }}
+
+      - name: Upload to S3
+        run: aws s3 cp build/libs/demoapp-0.0.1-SNAPSHOT.jar s3://${{ secrets.S3_BUCKET_NAME }}/demoapp-${{ steps.vars.outputs.sha_short }}.jar
 
       # ECR LOGIN
       # - name: Login to Amazon ECR
