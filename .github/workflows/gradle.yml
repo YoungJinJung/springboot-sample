@@ -61,7 +61,7 @@ jobs:
           role-to-assume: ${{ secrets.ASSUME_IAM_ROLE }}
 
       - name: Upload to S3
-        run: aws s3 cp build/libs/demoapp-0.0.1-SNAPSHOT.jar s3://${{ env.S3_BUCKET_NAME }}/demoapp/main/demoapp-${{ steps.vars.outputs.sha_short }}.jar
+        run: aws s3 cp build/libs/demo-0.0.1-SNAPSHOT.jar s3://${{ env.S3_BUCKET_NAME }}/demoapp/main/demoapp-${{ steps.vars.outputs.sha_short }}.jar
 
       # ECR LOGIN
       # - name: Login to Amazon ECR
