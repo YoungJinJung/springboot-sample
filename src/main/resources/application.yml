@@ -1,6 +1,10 @@
 spring:
   application:
     name: sample
+  cloud:
+    aws:
+      region:
+        static: ap-northeast-2
 
 logging:
   level:
@@ -16,3 +20,10 @@ management:
       enabled: true
     livenessstate:
       enabled: true
+
+sample:
+  id: ${id:test}
+  password: ${password:test}
+
+custom:
+  token: ${token_value:U2FtcGxlIERldk9wcyB0b2tlbiB2YWx1ZXMK}

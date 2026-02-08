@@ -31,9 +31,9 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
 	// DB
-	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
-	implementation 'software.amazon.jdbc:aws-advanced-jdbc-wrapper:2.6.6'
-	implementation 'org.postgresql:postgresql:42.7.8'
+	// implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	// implementation 'software.amazon.jdbc:aws-advanced-jdbc-wrapper:2.6.6'
+	// implementation 'org.postgresql:postgresql:42.7.8'
 
 	// aws setting
 	implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap:4.3.0'
