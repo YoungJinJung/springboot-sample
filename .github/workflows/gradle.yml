@@ -72,26 +72,26 @@ jobs:
         run: |
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.REGION }}.amazonaws.com/${{ env.APP_NAME }}:d${{ steps.vars.outputs.sha_short }}
 
-      - name: Download task definition
-        run: |
-          aws ecs describe-task-definition --task-definition demo-xyzdapne2 --query taskDefinition > task-definition.json
-
-      - name: Fill in the new image ID in the Amazon ECS task definition
-        id: task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: task-definition.json
-          container-name: demo
-          image: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.REGION }}.amazonaws.com/${{ env.APP_NAME }}:d${{ steps.vars.outputs.sha_short }}
-
-      - name: Deploy to Amazon ECS service
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
-        with:
-          task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: demo-xyzdapne2
-          cluster: demo-xyzdapne2
-          wait-for-service-stability: true
-
+#      - name: Download task definition
+#        run: |
+#          aws ecs describe-task-definition --task-definition demo-xyzdapne2 --query taskDefinition > task-definition.json
+#
+#      - name: Fill in the new image ID in the Amazon ECS task definition
+#        id: task-def
+#        uses: aws-actions/amazon-ecs-render-task-definition@v1
+#        with:
+#          task-definition: task-definition.json
+#          container-name: demo
+#          image: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.REGION }}.amazonaws.com/${{ env.APP_NAME }}:d${{ steps.vars.outputs.sha_short }}
+#
+#      - name: Deploy to Amazon ECS service
+#        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+#        with:
+#          task-definition: ${{ steps.task-def.outputs.task-definition }}
+#          service: demo-xyzdapne2
+#          cluster: demo-xyzdapne2
+#          wait-for-service-stability: true
+#
     # - name: Deploy to Amazon ECS
     #   uses: aws-actions/amazon-ecs-deploy-task-definition@v2
     #   with:
