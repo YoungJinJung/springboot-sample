@@ -92,8 +92,8 @@ jobs:
           cluster: demoapp-xyzdapne2
           wait-for-service-stability: true
           codedeploy-appspec: appspec.json
-          codedeploy-application: demo-xyzdapne2
-          codedeploy-deployment-group: demo-xyzdapne2
+          codedeploy-application: demoapp-xyzdapne2
+          codedeploy-deployment-group: demoapp-xyzdapne2
 
     # - name: Checkout k8s-env
     #   uses: actions/checkout@v4
