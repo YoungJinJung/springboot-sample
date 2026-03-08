@@ -81,7 +81,7 @@ jobs:
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: task-definition.json
-          container-name: demoapp
+          container-name: demo
           image: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.REGION }}.amazonaws.com/${{ env.APP_NAME }}:d${{ steps.vars.outputs.sha_short }}
 
       - name: Deploy to Amazon ECS
@@ -91,9 +91,9 @@ jobs:
           service: demoapp-xyzdapne2
           cluster: demoapp-xyzdapne2
           wait-for-service-stability: true
-          codedeploy-appspec: appspec.json
-          codedeploy-application: demo-xyzdapne2
-          codedeploy-deployment-group: demo-xyzdapne2
+          # codedeploy-appspec: appspec.json
+          # codedeploy-application: demo-xyzdapne2
+          # codedeploy-deployment-group: demo-xyzdapne2
 
     # - name: Checkout k8s-env
     #   uses: actions/checkout@v4
